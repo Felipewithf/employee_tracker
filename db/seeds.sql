@@ -28,18 +28,18 @@ VALUE ("Warehouse Helper", 20, 1),
 INSERT INTO employee(first_name, last_name,role_id,manager_id)
 VALUES
     ("John", "Doe", 2, NULL),  -- Warehouse manager
-    ("Jane", "Smith", 1, 2),    -- Warehouse Helper, managed by John Doe
-    ("Michael", "Johnson", 4, 5),  -- Product Designer, managed by Alex Brown
-    ("Sara", "Williams", 5, 5),   -- Illustrator, managed by Alex Brown
+    ("Jane", "Smith", 1, 1),    -- Warehouse Helper, managed by John Doe
     ("Alex", "Brown", 6, NULL),      -- Design Lead
+    ("Michael", "Johnson", 4, 3),  -- Product Designer, managed by Alex Brown
+    ("Sara", "Williams", 5, 3),   -- Illustrator, managed by Alex Brown
     ("Emily", "Davis", 7, NULL),   -- Lawyer
-    ("Robert", "Jones", 10, 10),  -- Clinical Analyst Manager, managed by Daniel Wilson
-    ("Laura", "Miller", 9, 8),    -- Clinical Analyst, managed by Robert Jones
     ("Daniel", "Wilson", 10, NULL),  -- VP of Clinical Affairs
-    ("Grace", "Taylor", 12, 14),  -- Software Engineer,  by Ava Harris
-    ("William", "Anderson", 12, 14),  -- Software Engineer, managed  by Ava Harris
-    ("Olivia", "Martinez", 11, 14),  -- Product Manager, managed by Ava Harris
-    ("Benjamin", "Lopez", 13, 14),  -- Cloud Engineer, by Ava Harris
-    ("Ava", "Harris", 14, 15),    -- CTO
+    ("Robert", "Jones", 10, 7),  -- Clinical Analyst Manager, managed by Daniel Wilson
+    ("Laura", "Miller", 9, 8),    -- Clinical Analyst, managed by Robert Jones
     ("Liam", "Clark", 15, NULL),    -- CEO
-    ("Sophia", "Lee", 15, 15);      -- Executive Secretary, managed by Liam Clark
+    ("Ava", "Harris", 14, 10),    -- CTO   
+    ("Grace", "Taylor", 12, 11),  -- Software Engineer,  by Ava Harris
+    ("William", "Anderson", 12, 11),  -- Software Engineer, managed  by Ava Harris
+    ("Olivia", "Martinez", 11, 11),  -- Product Manager, managed by Ava Harris
+    ("Benjamin", "Lopez", 13, 11),  -- Cloud Engineer, by Ava Harris
+    ("Sophia", "Lee", 15, 10);      -- Executive Secretary, managed by Liam Clark
