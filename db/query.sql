@@ -3,7 +3,7 @@ use employees_db;
 -- View all Departments 
 SELECT id, name AS departments FROM department;
 
--- View all Departments 
+-- View all Roles
 SELECT id, title AS role, salary, department_id FROM role;
 
 -- View all employees
