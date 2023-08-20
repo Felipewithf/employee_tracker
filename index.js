@@ -186,25 +186,35 @@ function displayData(userChoice) {
                         type: "list",
                         message: "Select Employee",
                         name: "employee",
-                        choices: ["Velma", "shaggy"]
+                        choices: updated_empl_list
                     },
                     {
                         type: "list",
                         message: "What is the new role of the employee?",
                         name: "newRole",
-                        choices: ["Cleaner", "Warehouse Manager"]
+                        choices: updated_role_list
                     },
                 ]).then((res) => {
-                    console.log(res);
+
+                    const empl_id = (updated_empl_list.indexOf(res.employee))+ 1;
+                    const role_id = (updated_role_list.indexOf(res.newRole))+ 1;
+                    db.query(`UPDATE employee SET role_id = ${role_id} WHERE id = ${empl_id}`);
+                    db.query(`SELECT e.id, e.first_name, e.last_name, r.title, r.salary, d.name as department, ee.first_name as manager_name
+                        FROM employee as e
+                        JOIN role as r
+                        on r.id = e.role_id
+                        JOIN department as d
+                        on d.id = r.department_id
+                        LEFT JOIN employee as ee
+                        on e.manager_id = ee.id`, function (err, results) {
+                        console.table(results);
+                        askToContinue();
+                    });
                 });
             break;
         default:
          process.exit(0);
     }
-
-
-
-
 }
 
 function askToContinue() {
@@ -224,10 +234,10 @@ function askToContinue() {
 }
 
 
-function fetchLatestData(){
-    fetchDepartments();
-    fetchRoles();
-    fetchEmployees();
+async function fetchLatestData(){
+   await fetchDepartments();
+   await fetchRoles();
+   await fetchEmployees();
 }
 
 function fetchDepartments() {
@@ -260,4 +270,5 @@ function fetchEmployees(){
     });
 }
 
+fetchLatestData();
 mainMenu();
