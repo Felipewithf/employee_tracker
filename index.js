@@ -5,6 +5,10 @@ const mysql = require('mysql2');
 const cTable = require('console.table');
 
 
+let updated_dept_list = [];
+let updated_role_list = [];
+let updated_empl_list = [];
+
 console.log(`
 ███████ ███    ███ ██████  ██       ██████  ██    ██ ███████ ███████ 
 ██      ████  ████ ██   ██ ██      ██    ██  ██  ██  ██      ██      
@@ -46,12 +50,13 @@ const mainMenu = () => {
         ]).then((res) => {
             console.log(res);
             displayData(res.selection);
+            
 
         });
 }
 
 function displayData(userChoice) {
-
+    fetchLatestData();
     switch (userChoice) {
         case "View all departments":
             db.query('SELECT id, name AS departments FROM department;', function (err, results) {
@@ -60,7 +65,10 @@ function displayData(userChoice) {
             });
             break;
         case "View all roles":
-            db.query('SELECT id, title AS role, salary, department_id FROM role;', function (err, results) {
+            db.query(`SELECT r.id, r.title AS job_role, r.salary, d.name as department
+            FROM role AS r
+            JOIN department AS d 
+            ON r.department_id = d.id;`, function (err, results) {
                 console.table(results);
                 askToContinue();
             });
@@ -109,15 +117,19 @@ function displayData(userChoice) {
                         name: "salary"
                     },
                     {
-                        type: "number",
-                        message: "What is the department ID?",
-                        name: "dep_ID"
+                        type: "list",
+                        message: "What is the department?",
+                        name: "department",
+                        choices: updated_dept_list
                     }
                 ]).then((res) => {
-                    console.log(res);
+                    const dep_id = (updated_dept_list.indexOf(res.department))+ 1;
                     db.query(`INSERT INTO role(title, salary, department_id)
-                        VALUE ("${res.newRole}", "${res.salary}", "${res.dep_ID}");`);
-                    db.query('SELECT id, title AS role, salary, department_id FROM role;', function (err, results) {
+                        VALUE ("${res.newRole}", "${res.salary}", "${dep_id}");`);
+                    db.query(`SELECT r.id, r.title AS job_role, r.salary, d.name as department
+                    FROM role AS r
+                    JOIN department AS d 
+                    ON r.department_id = d.id;`, function (err, results) {
                         console.table(results);
                         askToContinue();
                     });
@@ -137,19 +149,23 @@ function displayData(userChoice) {
                         name: "lastName"
                     },
                     {
-                        type: "number",
-                        message: "What is the ID of its role?",
-                        name: "role"
+                        type: "list",
+                        message: "What is the employee role?",
+                        name: "role",
+                        choices: updated_role_list
                     },
                     {
-                        type: "number",
-                        message: "What is the ID of its manager?",
-                        name: "manager_ID"
+                        type: "list",
+                        message: "What is the name of its manager?",
+                        name: "manager",
+                        choices:  updated_empl_list
                     }
                 ]).then((res) => {
                     console.log(res);
+                    const role_id = (updated_role_list.indexOf(res.role))+ 1;
+                    const manager_id = (updated_empl_list.indexOf(res.manager))+ 1;
                     db.query(`INSERT INTO employee(first_name, last_name,role_id,manager_id)
-                        VALUE ("${res.firstName}", "${res.lastName}", "${res.role}","${res.manager_ID}");`);
+                        VALUE ("${res.firstName}", "${res.lastName}", "${role_id}","${manager_id}");`);
                     db.query(`SELECT e.id, e.first_name, e.last_name, r.title, r.salary, d.name as department, ee.first_name as manager_name
                         FROM employee as e
                         JOIN role as r
@@ -205,6 +221,43 @@ function askToContinue() {
             }
             mainMenu();
         });
+}
+
+
+function fetchLatestData(){
+    fetchDepartments();
+    fetchRoles();
+    fetchEmployees();
+}
+
+function fetchDepartments() {
+    updated_dept_list =[]; 
+    db.query('SELECT name FROM department;', function (err, results) {
+     results.forEach(element => {
+        updated_dept_list.push(element.name);
+        });
+        return updated_dept_list;
+    });
+}
+
+function fetchRoles(){
+    updated_role_list =[]; 
+    db.query('SELECT title FROM role;', function (err, results) {
+     results.forEach(element => {
+        updated_role_list.push(element.title);
+        });
+        return updated_role_list;
+    });
+}
+
+function fetchEmployees(){
+    updated_empl_list =[]; 
+    db.query('SELECT first_name, last_name FROM employee;', function (err, results) {
+     results.forEach(element => {
+        updated_empl_list.push(`${element.first_name} ${element.last_name}`);
+        });
+        return updated_empl_list;
+    });
 }
 
 mainMenu();
